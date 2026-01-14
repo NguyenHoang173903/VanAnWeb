@@ -1,0 +1,137 @@
+.sidebar {
+    width: 370px;
+    background-color: #03344B;
+    background-image: linear-gradient(180deg, #03344B 0%, #03344B 22%, #08A0B1 100%);
+    color: rgba(255, 255, 255, 0.92);
+    overflow: hidden;
+    padding: 0;
+}
+
+.sidebar-inner {
+    height: calc(100vh - 7.5rem);
+    display: flex;
+    flex-direction: column;
+}
+
+.brand-row {
+    padding: 0.5rem 1rem 1rem 1rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+    margin-bottom: 0.5rem;
+}
+
+.brand {
+    font-weight: 700;
+    letter-spacing: 0.2px;
+}
+
+.nav {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    padding: 0.75rem 0.75rem 0.5rem 0.75rem;
+    overflow: auto;
+}
+
+.nav-link {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.8rem 0.9rem;
+    color: rgba(255, 255, 255, 0.88);
+    text-decoration: none;
+    border-radius: 0.6rem;
+    font-weight: 700;
+    letter-spacing: 0.2px;
+    background: rgba(0, 0, 0, 0.12);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.nav-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    transform: translateY(-6px);
+}
+
+.nav-icon svg {
+    display: block;
+}
+
+.nav-text {
+    font-family: "Poppins", system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+    font-size: 24px;
+    font-weight: 700;
+    letter-spacing: 0;
+    line-height: 1;
+    color: #ffffff;
+}
+
+.nav-link:hover {
+    background: rgba(0, 0, 0, 0.18);
+    color: #fff;
+}
+
+.nav-link.active {
+    background: rgba(0, 0, 0, 0.26);
+    border-color: rgba(255, 255, 255, 0.14);
+    color: #fff;
+}
+
+.sidebar-footer {
+    margin-top: auto;
+    background: #ffffff;
+    border-top: 1px solid rgba(0, 0, 0, 0.08);
+    padding: 0.75rem 0.9rem;
+}
+
+.collapse-button {
+    width: 100%;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.35rem 0;
+    border: 0;
+    background: transparent;
+    color: #0891b2;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.collapse-button:hover {
+    color: #0e7490;
+}
+
+.collapse-button:focus-visible {
+    outline: 2px solid #ffffff;
+    outline-offset: 2px;
+    border-radius: 0.4rem;
+}
+
+.collapse-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+@media (max-width: 640.98px) {
+    .sidebar {
+        position: fixed;
+        top: 7.5rem;
+        bottom: 0;
+        left: 0;
+        transform: translateX(-105%);
+        transition: transform 160ms ease;
+        z-index: 20;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.35);
+    }
+
+    .sidebar[data-open="True"] {
+        transform: translateX(0);
+    }
+
+    .sidebar-inner {
+        height: calc(100vh - 7.5rem);
+    }
+}
