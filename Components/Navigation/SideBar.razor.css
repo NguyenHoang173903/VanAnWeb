@@ -27,23 +27,25 @@
 .nav {
     display: flex;
     flex-direction: column;
-    gap: 0.25rem;
-    padding: 0.75rem 0.75rem 0.5rem 0.75rem;
+    gap: 0;
+    /* padding: 0.75rem 0 0.5rem 0; */
     overflow: auto;
 }
 
-.nav-link {
+.nav ::deep .nav-link {
     display: flex;
     align-items: center;
     gap: 0.75rem;
-    padding: 0.8rem 0.9rem;
+    width: 100%;
+    box-sizing: border-box;
+    min-height: 64px;
+    padding: 0.95rem 0.9rem;
     color: rgba(255, 255, 255, 0.88);
     text-decoration: none;
-    border-radius: 0.6rem;
     font-weight: 700;
     letter-spacing: 0.2px;
-    background: rgba(0, 0, 0, 0.12);
-    border: 1px solid rgba(255, 255, 255, 0.08);
+    background: transparent;
+    transition: background-color 160ms ease, border-color 160ms ease, color 160ms ease;
 }
 
 .nav-icon {
@@ -52,7 +54,6 @@
     justify-content: center;
     width: 28px;
     height: 28px;
-    transform: translateY(-6px);
 }
 
 .nav-icon svg {
@@ -68,14 +69,18 @@
     color: #ffffff;
 }
 
-.nav-link:hover {
-    background: rgba(0, 0, 0, 0.18);
+.nav ::deep .nav-link:hover {
+    background: rgba(255, 255, 255, 0.12);
     color: #fff;
 }
 
-.nav-link.active {
-    background: rgba(0, 0, 0, 0.26);
-    border-color: rgba(255, 255, 255, 0.14);
+.nav ::deep .nav-link:focus-visible {
+    outline: 2px solid rgba(255, 255, 255, 0.85);
+    outline-offset: 2px;
+}
+
+.nav ::deep .nav-link.active {
+    background: rgba(255, 255, 255, 0.18);
     color: #fff;
 }
 
@@ -97,6 +102,16 @@
     color: #0891b2;
     font-weight: 600;
     cursor: pointer;
+}
+
+.footer-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    font-size: 22px;
+    line-height: 1;
 }
 
 .collapse-button:hover {
@@ -127,11 +142,68 @@
         box-shadow: 0 10px 25px rgba(0, 0, 0, 0.35);
     }
 
-    .sidebar[data-open="True"] {
+    .sidebar.is-open {
         transform: translateX(0);
     }
 
     .sidebar-inner {
         height: calc(100vh - 7.5rem);
+    }
+}
+
+@media (min-width: 641px) {
+    .sidebar {
+        transition: width 180ms ease;
+    }
+
+    /* Collapsed: shrink to hamburger button */
+    .sidebar.is-collapsed {
+        width: 0;
+        background: transparent;
+        background-image: none;
+    }
+
+    .sidebar.is-collapsed .sidebar-inner {
+        width: 0;
+    }
+
+    .sidebar.is-collapsed .nav {
+        display: none;
+    }
+
+    .sidebar.is-collapsed .sidebar-footer {
+        background: transparent;
+        border-top: 0;
+        padding: 0;
+    }
+
+    .sidebar.is-collapsed .collapse-button {
+        position: fixed;
+        left: 14px;
+        bottom: 14px;
+        z-index: 30;
+        width: 52px;
+        height: 52px;
+        justify-content: center;
+        padding: 0;
+        border-radius: 14px;
+        background: rgba(8, 160, 177, 0.95);
+        color: #ffffff;
+        box-shadow: 0 14px 30px rgba(0, 0, 0, 0.28);
+    }
+
+    .sidebar.is-collapsed .collapse-button:hover {
+        background: rgba(8, 160, 177, 1);
+        color: #ffffff;
+    }
+
+    .sidebar.is-collapsed .collapse-button:focus-visible {
+        outline: 3px solid rgba(255, 255, 255, 0.9);
+        outline-offset: 3px;
+        border-radius: 16px;
+    }
+
+    .sidebar.is-collapsed .collapse-button > :not(.footer-icon) {
+        display: none;
     }
 }

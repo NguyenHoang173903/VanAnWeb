@@ -1,0 +1,33 @@
+
+<div class="@ShellClass" style="@ShellStyle">
+	<table class="grid" style="@TableStyle" aria-label="@AriaLabel">
+		<thead>
+			@Header
+		</thead>
+		<tbody>
+			@Body
+		</tbody>
+	</table>
+</div>
+
+@code {
+	[Parameter] public string AriaLabel { get; set; } = "Table";
+
+	/// <summary>Height of the scroll container (e.g. 520px, 60vh). Leave empty for auto.</summary>
+	[Parameter] public string? Height { get; set; }
+
+	/// <summary>Min width of the table (e.g. 980px).</summary>
+	[Parameter] public string? MinWidth { get; set; }
+
+	/// <summary>Optional extra class applied to the scroll container.</summary>
+	[Parameter] public string? Class { get; set; }
+
+	[Parameter] public RenderFragment? Header { get; set; }
+	[Parameter] public RenderFragment? Body { get; set; }
+
+	private string ShellStyle => string.IsNullOrWhiteSpace(Height) ? string.Empty : $"height: {Height};";
+	private string TableStyle => string.IsNullOrWhiteSpace(MinWidth) ? string.Empty : $"min-width: {MinWidth};";
+
+	private string ShellClass
+		=> string.IsNullOrWhiteSpace(Class) ? "table-shell" : $"table-shell {Class}";
+}

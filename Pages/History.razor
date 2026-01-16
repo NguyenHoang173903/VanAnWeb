@@ -1,0 +1,166 @@
+﻿@page "/history"
+@layout Layout.MainLayout
+
+<PageTitle>Lịch Sử</PageTitle>
+
+<div class="history">
+	<div class="history-toolbar">
+		<div class="field">
+			<label>From</label>
+			<input type="date" class="input" @bind="FromDate" />
+		</div>
+
+		<div class="field">
+			<label>To</label>
+			<input type="date" class="input" @bind="ToDate" />
+		</div>
+
+		<div class="spacer"></div>
+
+		<div class="field select">
+			<select class="input" @bind="SelectedEventType">
+				@foreach (var type in EventTypes)
+				{
+					<option value="@type.Id">@type.Name</option>
+				}
+			</select>
+		</div>
+
+		<div class="search">
+			<span class="search-icon" aria-hidden="true">
+				<svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor" focusable="false">
+					<path d="M10 4a6 6 0 1 1 0 12 6 6 0 0 1 0-12Zm0-2a8 8 0 1 0 4.9 14.3l4.4 4.4a1 1 0 0 0 1.4-1.4l-4.4-4.4A8 8 0 0 0 10 2Z" />
+				</svg>
+			</span>
+			<input class="input" placeholder="Tìm kiếm" @bind="SearchText" />
+		</div>
+
+		<button type="button" class="btn-export" @onclick="ExportExcel">
+			Xuất Excel
+		</button>
+	</div>
+
+
+	<Table Height="520px" MinWidth="860px" AriaLabel="Bảng lịch sử">
+		<Header>
+			<tr>
+				<th class="col-id">ID</th>
+				<th class="col-time">Thời Gian</th>
+				<th class="col-device">Thiết Bị</th>
+				<th class="col-account">Tài Khoản</th>
+				<th class="col-type">Loại Sự Kiện</th>
+				<th class="col-desc">Mô Tả</th>
+			</tr>
+		</Header>
+		<Body>
+			@if (Rows.Count == 0)
+			{
+				@for (var i = 0; i < 12; i++)
+				{
+					<tr>
+						@for (var c = 0; c < 6; c++)
+						{
+							<td>&nbsp;</td>
+						}
+					</tr>
+				}
+			}
+			else
+			{
+				@foreach (var row in FilteredRows)
+				{
+					<tr>
+						<td class="center">@row.Id</td>
+						<td class="center">@row.Time</td>
+						<td class="center">@row.Device</td>
+						<td class="center">@row.Account</td>
+						<td class="center">
+							<span class="event-type @GetEventClass(row.Type)">@row.Type</span>
+						</td>
+						<td class="center">@row.Description</td>
+					</tr>
+				}
+			}
+		</Body>
+	</Table>
+</div>
+
+@code {
+	private DateTime FromDate { get; set; } = DateTime.Today;
+	private DateTime ToDate { get; set; } = DateTime.Today;
+	private string SelectedEventType { get; set; } = "all";
+	private string SearchText { get; set; } = string.Empty;
+
+	private List<EventTypeOption> EventTypes { get; } =
+	[
+		new("all", "Loại sự kiện"),
+		new("login", "Đăng Nhập"),
+		new("error", "Lỗi"),
+		new("ok", "Hoạt Động Tốt"),
+		new("warn", "Cảnh Báo")
+	];
+
+	private List<HistoryRow> Rows { get; } =
+	[
+		new("01", "06/01/2026 14:20:20", "", "Technical", "Đăng Nhập", "Technical đăng nhập"),
+		new("02", "06/01/2026 14:20:20", "PLC", "Admin", "Lỗi", "PLC mất kết nối"),
+		new("03", "06/01/2026 14:20:20", "Bom 1", "Admin", "Hoạt Động Tốt", "Bom bắt đầu chạy"),
+		new("04", "06/01/2026 14:20:20", "PLC", "Admin", "Hoạt Động Tốt", "PLC bắt đầu kết nối"),
+		new("05", "06/01/2026 14:20:20", "Bom 5", "Admin", "Cảnh Báo", "Cảnh báo dòng quá tải"),
+		new("06", "06/01/2026 14:20:20", "Bom 6", "Admin", "Lỗi", "Quá momen"
+		)
+	];
+
+	private IEnumerable<HistoryRow> FilteredRows
+	{
+		get
+		{
+			IEnumerable<HistoryRow> query = Rows;
+
+			if (!string.Equals(SelectedEventType, "all", StringComparison.OrdinalIgnoreCase))
+			{
+				query = SelectedEventType switch
+				{
+					"login" => query.Where(r => r.Type == "Đăng Nhập"),
+					"error" => query.Where(r => r.Type == "Lỗi"),
+					"ok" => query.Where(r => r.Type == "Hoạt Động Tốt"),
+					"warn" => query.Where(r => r.Type == "Cảnh Báo"),
+					_ => query
+				};
+			}
+
+			if (!string.IsNullOrWhiteSpace(SearchText))
+			{
+				var s = SearchText.Trim();
+				query = query.Where(r =>
+					r.Id.Contains(s, StringComparison.OrdinalIgnoreCase) ||
+					r.Time.Contains(s, StringComparison.OrdinalIgnoreCase) ||
+					r.Device.Contains(s, StringComparison.OrdinalIgnoreCase) ||
+					r.Account.Contains(s, StringComparison.OrdinalIgnoreCase) ||
+					r.Type.Contains(s, StringComparison.OrdinalIgnoreCase) ||
+					r.Description.Contains(s, StringComparison.OrdinalIgnoreCase));
+			}
+
+			return query;
+		}
+	}
+
+	private static string GetEventClass(string type)
+		=> type switch
+		{
+			"Lỗi" => "is-error",
+			"Cảnh Báo" => "is-warn",
+			"Hoạt Động Tốt" => "is-ok",
+			"Đăng Nhập" => "is-login",
+			_ => ""
+		};
+
+	private Task ExportExcel()
+	{
+		// TODO: hook to real export endpoint
+		return Task.CompletedTask;
+	}
+
+	private sealed record EventTypeOption(string Id, string Name);
+	private sealed record HistoryRow(string Id, string Time, string Device, string Account, string Type, string Description);
+}

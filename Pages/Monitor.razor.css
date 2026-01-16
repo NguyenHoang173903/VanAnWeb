@@ -1,0 +1,117 @@
+
+.monitor {
+	padding: 0.75rem 0.75rem 1rem 0.75rem;
+}
+
+.monitor-toolbar {
+	display: flex;
+	align-items: center;
+	gap: 0.75rem;
+	padding: 0.5rem 0.75rem;
+	background: #eef6f8;
+	border: 1px solid rgba(8, 160, 177, 0.35);
+	border-radius: 0.6rem;
+}
+
+.monitor-toolbar .field {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.5rem;
+}
+
+.monitor-toolbar label {
+	font-size: 0.85rem;
+	color: #0b4c53;
+	font-weight: 700;
+	margin: 0;
+}
+
+.monitor-toolbar .input {
+	height: 34px;
+	padding: 0.25rem 0.5rem;
+	border-radius: 0.45rem;
+	border: 1px solid rgba(0, 0, 0, 0.18);
+	background: #ffffff;
+	color: #0b4c53;
+	min-width: 140px;
+}
+
+.monitor-toolbar .field.select .input {
+	min-width: 160px;
+}
+
+.monitor-toolbar .input:focus-visible {
+	outline: 2px solid rgba(8, 160, 177, 0.65);
+	outline-offset: 2px;
+}
+
+.monitor-toolbar .spacer {
+	flex: 1;
+}
+
+.btn-export {
+	height: 34px;
+	padding: 0 0.9rem;
+	border-radius: 0.5rem;
+	border: 1px solid rgba(8, 160, 177, 0.55);
+	background: #ffffff;
+	color: #0b4c53;
+	font-weight: 700;
+	cursor: pointer;
+}
+
+.btn-export:hover {
+	background: rgba(8, 160, 177, 0.12);
+}
+
+.monitor-table {
+	margin-top: 0.75rem;
+	border-radius: 0.6rem;
+	border: 1px solid rgba(8, 160, 177, 0.4);
+	overflow: hidden;
+	background: #ffffff;
+}
+
+.monitor-table {
+	height: 520px;
+	overflow: auto;
+}
+
+table.grid {
+	width: 100%;
+	border-collapse: collapse;
+	min-width: 980px;
+}
+
+table.grid thead th {
+	position: sticky;
+	top: 0;
+	background: #0a7681;
+	color: #ffffff;
+	font-size: 11px;
+	line-height: 1.1;
+	font-weight: 800;
+	text-align: center;
+	padding: 0.35rem 0.35rem;
+	border-right: 1px solid rgba(255, 255, 255, 0.22);
+	border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+	white-space: nowrap;
+}
+
+table.grid tbody td {
+	font-size: 12px;
+	padding: 0.35rem 0.45rem;
+	border-right: 1px solid rgba(8, 160, 177, 0.35);
+	border-bottom: 1px solid rgba(8, 160, 177, 0.35);
+	height: 28px;
+	white-space: nowrap;
+}
+
+table.grid tbody tr:nth-child(even) td {
+	background: #f7fbfc;
+}
+
+table.grid tbody tr:hover td {
+	background: rgba(8, 160, 177, 0.10);
+}
+

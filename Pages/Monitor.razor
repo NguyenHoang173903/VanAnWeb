@@ -1,0 +1,129 @@
+﻿@page "/monitor"
+@layout Layout.MainLayout
+
+<PageTitle>Giám Sát</PageTitle>
+
+<div class="monitor">
+	<div class="monitor-toolbar">
+		<div class="field">
+			<label>From</label>
+			<input type="date" class="input" @bind="FromDate" />
+		</div>
+
+		<div class="field">
+			<label>To</label>
+			<input type="date" class="input" @bind="ToDate" />
+		</div>
+
+		<div class="spacer"></div>
+
+		<div class="field select">
+			<select class="input" @bind="SelectedPumpId">
+				@foreach (var pump in Pumps)
+				{
+					<option value="@pump.Id">@pump.Name</option>
+				}
+			</select>
+		</div>
+
+		<button type="button" class="btn-export" @onclick="ExportExcel">
+			Xuất Excel
+		</button>
+	</div>
+
+	<Table Height="520px" MinWidth="980px" AriaLabel="Bảng giám sát">
+		<Header>
+			<tr>
+				<th>Ngày</th>
+				<th>Giờ</th>
+				<th>NĐ Cuộn A (°C)</th>
+				<th>NĐ Cuộn B (°C)</th>
+				<th>NĐ Cuộn C (°C)</th>
+				<th>Đ. Áp RS (V)</th>
+				<th>Đ. Áp ST (V)</th>
+				<th>Đ. Áp TR (V)</th>
+				<th>Đ.Điện R</th>
+				<th>Đ.Điện S</th>
+				<th>Đ.Điện T</th>
+				<th>T.Gian H.Động</th>
+				<th>Mức Bể Xả</th>
+				<th>Mức Bể Hút</th>
+			</tr>
+		</Header>
+		<Body>
+			@if (Rows.Count == 0)
+			{
+				@for (var i = 0; i < 12; i++)
+				{
+					<tr>
+						@for (var c = 0; c < 14; c++)
+						{
+							<td>&nbsp;</td>
+						}
+					</tr>
+				}
+			}
+			else
+			{
+				@foreach (var row in Rows)
+				{
+					<tr>
+						<td>@row.Date</td>
+						<td>@row.Time</td>
+						<td>@row.TempA</td>
+						<td>@row.TempB</td>
+						<td>@row.TempC</td>
+						<td>@row.Vrs</td>
+						<td>@row.Vst</td>
+						<td>@row.Vtr</td>
+						<td>@row.CurrentR</td>
+						<td>@row.CurrentS</td>
+						<td>@row.CurrentT</td>
+						<td>@row.Runtime</td>
+						<td>@row.TankOut</td>
+						<td>@row.TankIn</td>
+					</tr>
+				}
+			}
+		</Body>
+	</Table>
+</div>
+
+@code {
+	private DateTime FromDate { get; set; } = DateTime.Today;
+	private DateTime ToDate { get; set; } = DateTime.Today;
+
+	private string SelectedPumpId { get; set; } = "pump1";
+	private List<PumpOption> Pumps { get; } =
+	[
+		new("pump1", "Bom 1"),
+		new("pump2", "Bom 2"),
+		new("pump3", "Bom 3")
+	];
+
+	private List<MonitorRow> Rows { get; } = [];
+
+	private Task ExportExcel()
+	{
+		// TODO: hook to real export endpoint
+		return Task.CompletedTask;
+	}
+
+	private sealed record PumpOption(string Id, string Name);
+
+	private sealed record MonitorRow(
+		string Date,
+		string Time,
+		string TempA,
+		string TempB,
+		string TempC,
+		string Vrs,
+		string Vst,
+		string Vtr,
+		string CurrentR,
+		string CurrentS,
+		string CurrentT,
+		string Runtime,
+		string TankOut,
+		string TankIn);
+}

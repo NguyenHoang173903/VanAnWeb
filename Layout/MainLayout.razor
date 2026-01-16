@@ -4,7 +4,7 @@
     <TopBar />
 
     <div class="app-body">
-        <SideBar IsOpen="_sidebarOpen" OnNavigate="CloseSidebar" OnToggle="ToggleSidebar" />
+        <SideBar IsOpen="_sidebarOpen" OnNavigate="KeepSidebarState" OnToggle="ToggleSidebar" />
         <div class="sidebar-overlay" data-open="@_sidebarOpen" @onclick="CloseSidebar" />
 
         <main class="main">
@@ -22,11 +22,20 @@
 </div>
 
 @code {
-    private bool _sidebarOpen;
+    private bool _sidebarOpen = true;
 
-    private void ToggleSidebar()
-        => _sidebarOpen = !_sidebarOpen;
+    private Task ToggleSidebar()
+    {
+        _sidebarOpen = !_sidebarOpen;
+        return Task.CompletedTask;
+    }
 
-    private void CloseSidebar()
-        => _sidebarOpen = false;
+    private Task CloseSidebar()
+    {
+        _sidebarOpen = false;
+        return Task.CompletedTask;
+    }
+
+    private Task KeepSidebarState()
+        => Task.CompletedTask;
 }
