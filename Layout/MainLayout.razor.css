@@ -18,9 +18,12 @@
 }
 
 .content {
-    padding: 1rem;
-    max-width: 1200px;
-    margin: 0 auto;
+    /* Keep content close to sidebar (avoid centered layout) */
+    padding: 20px 20px 20px 30px;
+    width: 100%;
+    max-width: none;
+    margin: 0;
+    box-sizing: border-box;
 }
 
 .sidebar-overlay {
@@ -44,11 +47,6 @@
     }
 }
 
-@media (min-width: 641px) {
-    .content {
-        padding: 1.25rem 1.5rem;
-    }
-}
 
 #blazor-error-ui {
     background: lightyellow;

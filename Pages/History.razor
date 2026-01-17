@@ -18,12 +18,13 @@
 		<div class="spacer"></div>
 
 		<div class="field select">
-			<select class="input" @bind="SelectedEventType">
-				@foreach (var type in EventTypes)
-				{
-					<option value="@type.Id">@type.Name</option>
-				}
-			</select>
+			<VaSelect TItem="EventTypeOption"
+					 Class="input"
+					 Items="EventTypes"
+					 @bind-Value="SelectedEventType"
+					 GetValue="t => t.Id"
+					 GetLabel="t => t.Name"
+					 AriaLabel="Loại sự kiện" />
 		</div>
 
 		<div class="search">
@@ -32,7 +33,7 @@
 					<path d="M10 4a6 6 0 1 1 0 12 6 6 0 0 1 0-12Zm0-2a8 8 0 1 0 4.9 14.3l4.4 4.4a1 1 0 0 0 1.4-1.4l-4.4-4.4A8 8 0 0 0 10 2Z" />
 				</svg>
 			</span>
-			<input class="input" placeholder="Tìm kiếm" @bind="SearchText" />
+			<input class="input" placeholder="Tìm kiếm" @bind-value="SearchText" @bind-value:event="oninput" />
 		</div>
 
 		<button type="button" class="btn-export" @onclick="ExportExcel">
@@ -40,8 +41,7 @@
 		</button>
 	</div>
 
-
-	<Table Height="520px" MinWidth="860px" AriaLabel="Bảng lịch sử">
+	<Table MinWidth="860px" AriaLabel="Bảng lịch sử">
 		<Header>
 			<tr>
 				<th class="col-id">ID</th>
@@ -53,21 +53,15 @@
 			</tr>
 		</Header>
 		<Body>
-			@if (Rows.Count == 0)
+			@if (_filteredRows.Count == 0)
 			{
-				@for (var i = 0; i < 12; i++)
-				{
-					<tr>
-						@for (var c = 0; c < 6; c++)
-						{
-							<td>&nbsp;</td>
-						}
-					</tr>
-				}
+				<tr>
+					<td class="empty" colspan="6">Không có dữ liệu</td>
+				</tr>
 			}
 			else
 			{
-				@foreach (var row in FilteredRows)
+				@foreach (var row in PagedRows)
 				{
 					<tr>
 						<td class="center">@row.Id</td>
@@ -83,13 +77,57 @@
 			}
 		</Body>
 	</Table>
+
+	<div class="pager" aria-label="Phân trang">
+		<button type="button" class="pager-btn" disabled="@(!HasPrevPage)" @onclick="GoPrev" aria-label="Trang trước">
+			‹
+		</button>
+		<div class="pager-info">@PageNumber / @TotalPages</div>
+		<button type="button" class="pager-btn" disabled="@(!HasNextPage)" @onclick="GoNext" aria-label="Trang sau">
+			›
+		</button>
+	</div>
 </div>
 
 @code {
+	private const int PageSize = 15;
+	private int _pageIndex;
+	private List<HistoryRow> _filteredRows = [];
+
 	private DateTime FromDate { get; set; } = DateTime.Today;
 	private DateTime ToDate { get; set; } = DateTime.Today;
-	private string SelectedEventType { get; set; } = "all";
-	private string SearchText { get; set; } = string.Empty;
+
+	private string _selectedEventType = "all";
+	private string SelectedEventType
+	{
+		get => _selectedEventType;
+		set
+		{
+			if (string.Equals(_selectedEventType, value, StringComparison.Ordinal))
+			{
+				return;
+			}
+
+			_selectedEventType = value;
+			ResetAndApplyFilters();
+		}
+	}
+
+	private string _searchText = string.Empty;
+	private string SearchText
+	{
+		get => _searchText;
+		set
+		{
+			if (string.Equals(_searchText, value, StringComparison.Ordinal))
+			{
+				return;
+			}
+
+			_searchText = value;
+			ResetAndApplyFilters();
+		}
+	}
 
 	private List<EventTypeOption> EventTypes { get; } =
 	[
@@ -100,48 +138,142 @@
 		new("warn", "Cảnh Báo")
 	];
 
-	private List<HistoryRow> Rows { get; } =
-	[
-		new("01", "06/01/2026 14:20:20", "", "Technical", "Đăng Nhập", "Technical đăng nhập"),
-		new("02", "06/01/2026 14:20:20", "PLC", "Admin", "Lỗi", "PLC mất kết nối"),
-		new("03", "06/01/2026 14:20:20", "Bom 1", "Admin", "Hoạt Động Tốt", "Bom bắt đầu chạy"),
-		new("04", "06/01/2026 14:20:20", "PLC", "Admin", "Hoạt Động Tốt", "PLC bắt đầu kết nối"),
-		new("05", "06/01/2026 14:20:20", "Bom 5", "Admin", "Cảnh Báo", "Cảnh báo dòng quá tải"),
-		new("06", "06/01/2026 14:20:20", "Bom 6", "Admin", "Lỗi", "Quá momen"
-		)
-	];
+	private List<HistoryRow> Rows { get; } = BuildRows();
 
-	private IEnumerable<HistoryRow> FilteredRows
+	protected override void OnInitialized()
+	{
+		ApplyFilters();
+	}
+
+	private static List<HistoryRow> BuildRows()
+	{
+		var baseTime = new DateTime(2026, 1, 6, 14, 20, 20);
+		var devices = new[] { "", "PLC", "Bom 1", "Bom 2", "Bom 3", "Bom 4", "Bom 5", "Bom 6" };
+		var types = new[] { "Đăng Nhập", "Lỗi", "Hoạt Động Tốt", "Cảnh Báo" };
+
+		var list = new List<HistoryRow>(capacity: 30);
+		for (var i = 1; i <= 30; i++)
+		{
+			var type = types[(i - 1) % types.Length];
+			var time = baseTime.AddMinutes(i * 3);
+			var timeText = time.ToString("dd/MM/yyyy HH:mm:ss");
+
+			var device = type == "Đăng Nhập" ? "" : devices[i % devices.Length];
+			var account = type == "Đăng Nhập" ? "Technical" : "Admin";
+
+			var description = type switch
+			{
+				"Đăng Nhập" => $"{account} đăng nhập",
+				"Lỗi" => device == "PLC" ? "PLC mất kết nối" : "Quá momen",
+				"Cảnh Báo" => "Cảnh báo dòng quá tải",
+				"Hoạt Động Tốt" => string.IsNullOrWhiteSpace(device) ? "Hệ thống hoạt động ổn định" : $"{device} hoạt động ổn định",
+				_ => ""
+			};
+
+			list.Add(new HistoryRow(
+				i.ToString("00"),
+				timeText,
+				device,
+				account,
+				type,
+				description));
+		}
+
+		return list;
+	}
+
+	private IEnumerable<HistoryRow> PagedRows
+		=> _filteredRows
+			.Skip(_pageIndex * PageSize)
+			.Take(PageSize);
+
+	private int TotalPages
 	{
 		get
 		{
-			IEnumerable<HistoryRow> query = Rows;
-
-			if (!string.Equals(SelectedEventType, "all", StringComparison.OrdinalIgnoreCase))
+			if (_filteredRows.Count == 0)
 			{
-				query = SelectedEventType switch
-				{
-					"login" => query.Where(r => r.Type == "Đăng Nhập"),
-					"error" => query.Where(r => r.Type == "Lỗi"),
-					"ok" => query.Where(r => r.Type == "Hoạt Động Tốt"),
-					"warn" => query.Where(r => r.Type == "Cảnh Báo"),
-					_ => query
-				};
+				return 1;
 			}
 
-			if (!string.IsNullOrWhiteSpace(SearchText))
-			{
-				var s = SearchText.Trim();
-				query = query.Where(r =>
-					r.Id.Contains(s, StringComparison.OrdinalIgnoreCase) ||
-					r.Time.Contains(s, StringComparison.OrdinalIgnoreCase) ||
-					r.Device.Contains(s, StringComparison.OrdinalIgnoreCase) ||
-					r.Account.Contains(s, StringComparison.OrdinalIgnoreCase) ||
-					r.Type.Contains(s, StringComparison.OrdinalIgnoreCase) ||
-					r.Description.Contains(s, StringComparison.OrdinalIgnoreCase));
-			}
+			return (int)Math.Ceiling(_filteredRows.Count / (double)PageSize);
+		}
+	}
 
-			return query;
+	private int PageNumber => TotalPages == 0 ? 1 : _pageIndex + 1;
+	private bool HasPrevPage => _pageIndex > 0;
+	private bool HasNextPage => _filteredRows.Count > 0 && _pageIndex + 1 < TotalPages;
+
+	private void GoPrev()
+	{
+		if (!HasPrevPage)
+		{
+			return;
+		}
+
+		_pageIndex--;
+	}
+
+	private void GoNext()
+	{
+		if (!HasNextPage)
+		{
+			return;
+		}
+
+		_pageIndex++;
+	}
+
+	private void ResetAndApplyFilters()
+	{
+		_pageIndex = 0;
+		ApplyFilters();
+	}
+
+	private void ApplyFilters()
+	{
+		IEnumerable<HistoryRow> query = Rows;
+
+		if (!string.Equals(SelectedEventType, "all", StringComparison.OrdinalIgnoreCase))
+		{
+			query = SelectedEventType switch
+			{
+				"login" => query.Where(r => r.Type == "Đăng Nhập"),
+				"error" => query.Where(r => r.Type == "Lỗi"),
+				"ok" => query.Where(r => r.Type == "Hoạt Động Tốt"),
+				"warn" => query.Where(r => r.Type == "Cảnh Báo"),
+				_ => query
+			};
+		}
+
+		if (!string.IsNullOrWhiteSpace(SearchText))
+		{
+			var s = SearchText.Trim();
+			query = query.Where(r =>
+				r.Id.Contains(s, StringComparison.OrdinalIgnoreCase) ||
+				r.Time.Contains(s, StringComparison.OrdinalIgnoreCase) ||
+				r.Device.Contains(s, StringComparison.OrdinalIgnoreCase) ||
+				r.Account.Contains(s, StringComparison.OrdinalIgnoreCase) ||
+				r.Type.Contains(s, StringComparison.OrdinalIgnoreCase) ||
+				r.Description.Contains(s, StringComparison.OrdinalIgnoreCase));
+		}
+
+		_filteredRows = query.ToList();
+		ClampPageIndex();
+	}
+
+	private void ClampPageIndex()
+	{
+		if (_filteredRows.Count == 0)
+		{
+			_pageIndex = 0;
+			return;
+		}
+
+		var maxIndex = TotalPages - 1;
+		if (_pageIndex > maxIndex)
+		{
+			_pageIndex = maxIndex;
 		}
 	}
 

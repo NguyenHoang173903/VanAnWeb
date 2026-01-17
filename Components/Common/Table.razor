@@ -25,7 +25,8 @@
 	[Parameter] public RenderFragment? Header { get; set; }
 	[Parameter] public RenderFragment? Body { get; set; }
 
-	private string ShellStyle => string.IsNullOrWhiteSpace(Height) ? string.Empty : $"height: {Height};";
+	// Use max-height so the shell can shrink to content when there are only a few rows.
+	private string ShellStyle => string.IsNullOrWhiteSpace(Height) ? string.Empty : $"max-height: {Height};";
 	private string TableStyle => string.IsNullOrWhiteSpace(MinWidth) ? string.Empty : $"min-width: {MinWidth};";
 
 	private string ShellClass

@@ -1,6 +1,7 @@
 
 .history {
-	padding: 0.75rem 0.75rem 1rem 0.75rem;
+	height: 100%;
+	width: 100%;
 }
 
 .history-toolbar {
@@ -8,8 +9,8 @@
 	align-items: center;
 	gap: 0.75rem;
 	padding: 0.5rem 0.75rem;
-	background: #eef6f8;
-	border: 1px solid rgba(8, 160, 177, 0.35);
+	/* background: #eef6f8;
+	border: 1px solid rgba(8, 160, 177, 0.35); */
 	border-radius: 0.6rem;
 }
 
@@ -38,6 +39,17 @@
 
 .history-toolbar .field.select .input {
 	min-width: 170px;
+}
+
+.history-toolbar ::deep .field.select select.input {
+	border: 1px solid rgba(8, 160, 177, 0.55);
+	border-radius: 0.6rem;
+	background: #ffffff;
+	color: #0b4c53;
+}
+
+.history-toolbar ::deep .field.select select.input option {
+	color: #0b4c53;
 }
 
 .history-toolbar .spacer {
@@ -136,5 +148,50 @@
 
 .history ::deep .col-desc {
 	width: 320px;
+}
+
+.history ::deep .empty {
+	text-align: center;
+	padding: 1.25rem 0.75rem;
+	color: rgba(11, 76, 83, 0.85);
+	font-weight: 600;
+}
+
+.pager {
+	display: flex;
+	align-items: center;
+	justify-content: flex-end;
+	gap: 0.75rem;
+	margin-top: 0.75rem;
+	padding-right: 1.25rem;
+}
+
+.pager-info {
+	min-width: 90px;
+	text-align: center;
+	font-weight: 700;
+	color: #0b4c53;
+}
+
+.pager-btn {
+	width: 44px;
+	height: 36px;
+	border-radius: 0.5rem;
+	border: 1px solid rgba(8, 160, 177, 0.55);
+	background: #ffffff;
+	color: #0b4c53;
+	font-size: 18px;
+	line-height: 1;
+	font-weight: 800;
+	cursor: pointer;
+}
+
+.pager-btn:hover {
+	background: rgba(8, 160, 177, 0.12);
+}
+
+.pager-btn:disabled {
+	opacity: 0.5;
+	cursor: not-allowed;
 }
 

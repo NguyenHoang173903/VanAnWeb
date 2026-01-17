@@ -1,6 +1,7 @@
 
 .monitor {
-	padding: 0.75rem 0.75rem 1rem 0.75rem;
+	height: 100%;
+	width: 100%;
 }
 
 .monitor-toolbar {
@@ -8,8 +9,8 @@
 	align-items: center;
 	gap: 0.75rem;
 	padding: 0.5rem 0.75rem;
-	background: #eef6f8;
-	border: 1px solid rgba(8, 160, 177, 0.35);
+	/* background: #eef6f8;
+	border: 1px solid rgba(8, 160, 177, 0.35); */
 	border-radius: 0.6rem;
 }
 
@@ -38,6 +39,17 @@
 
 .monitor-toolbar .field.select .input {
 	min-width: 160px;
+}
+
+.monitor-toolbar  ::deep .field.select select.input {
+	border: 1px solid rgba(8, 160, 177, 0.55);
+	border-radius: 0.6rem;
+	background: #ffffff;
+	color: #0b4c53;
+}
+
+.monitor-toolbar  ::deep .field.select select.input option {
+	color: #0b4c53;
 }
 
 .monitor-toolbar .input:focus-visible {
@@ -88,22 +100,23 @@ table.grid thead th {
 	top: 0;
 	background: #0a7681;
 	color: #ffffff;
-	font-size: 11px;
+	font-size: 13px;
 	line-height: 1.1;
 	font-weight: 800;
 	text-align: center;
-	padding: 0.35rem 0.35rem;
+	padding: 0.8rem 0.35rem;
+	height: 44px;
 	border-right: 1px solid rgba(255, 255, 255, 0.22);
 	border-bottom: 1px solid rgba(0, 0, 0, 0.08);
 	white-space: nowrap;
 }
 
 table.grid tbody td {
-	font-size: 12px;
-	padding: 0.35rem 0.45rem;
+	font-size: 13px;
+	padding: 0.7rem 0.45rem;
 	border-right: 1px solid rgba(8, 160, 177, 0.35);
 	border-bottom: 1px solid rgba(8, 160, 177, 0.35);
-	height: 28px;
+	height: 42px;
 	white-space: nowrap;
 }
 
@@ -113,5 +126,50 @@ table.grid tbody tr:nth-child(even) td {
 
 table.grid tbody tr:hover td {
 	background: rgba(8, 160, 177, 0.10);
+}
+
+.monitor ::deep .empty {
+	text-align: center;
+	padding: 1.25rem 0.75rem;
+	color: rgba(11, 76, 83, 0.85);
+	font-weight: 600;
+}
+
+.pager {
+	display: flex;
+	align-items: center;
+	justify-content: flex-end;
+	gap: 0.75rem;
+	margin-top: 0.75rem;
+	padding-right: 0.25rem;
+}
+
+.pager-info {
+	min-width: 90px;
+	text-align: center;
+	font-weight: 700;
+	color: #0b4c53;
+}
+
+.pager-btn {
+	width: 44px;
+	height: 36px;
+	border-radius: 0.5rem;
+	border: 1px solid rgba(8, 160, 177, 0.55);
+	background: #ffffff;
+	color: #0b4c53;
+	font-size: 18px;
+	line-height: 1;
+	font-weight: 800;
+	cursor: pointer;
+}
+
+.pager-btn:hover {
+	background: rgba(8, 160, 177, 0.12);
+}
+
+.pager-btn:disabled {
+	opacity: 0.5;
+	cursor: not-allowed;
 }
 
