@@ -1,0 +1,37 @@
+@inherits LayoutComponentBase
+
+<div class="login-layout-bg">
+    <div class="login-overlay">
+        <form class="login-form-panel" @onsubmit="OnLoginSubmit" @onsubmit:preventDefault="true">
+            <h1 class="login-form-title">Login</h1>
+            <div class="login-form-group">
+                <input type="text" class="login-input" placeholder="Username" />
+                <span class="login-icon">
+                    <img src="/icon/account_white.svg" alt="account" />
+                </span>
+            </div>
+            <div class="login-form-group">
+                <input type="password" class="login-input" placeholder="Password" />
+                <span class="login-icon">
+                    <img src="/icon/lock.svg" alt="lock" />
+                </span>
+            </div>
+            <div class="login-form-options">
+                <label class="login-remember">
+                    <input type="checkbox" /> Remember me
+                </label>
+                <a href="#" class="login-forgot">Forgot password?</a>
+            </div>
+            <button type="submit" class="login-btn">Login</button>
+        </form>
+
+        @Body
+    </div>
+</div>
+
+@code {
+    [Inject] NavigationManager Navigation { get; set; } = default!;
+
+    private void OnLoginSubmit()
+        => Navigation.NavigateTo("/home");
+}
